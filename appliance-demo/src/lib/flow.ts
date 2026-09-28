@@ -1,7 +1,7 @@
 export type Size = 'solo' | 'small' | 'large'
 export type Problem = 'found' | 'calls' | 'chaos' | 'payments'
 export type Tracking = 'sheets' | 'paper' | 'software' | 'none'
-export type Crack = 'team' | 'inventory' | 'paperwork' | 'support'
+export type Crack = 'team' | 'inventory' | 'paperwork' | 'support' | 'training'
 export type SectionId = 'website' | 'calls' | 'payments' | 'sheets' | 'ops'
 
 export interface Answers {

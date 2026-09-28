@@ -55,3 +55,10 @@ export const testimonial = {
   name: 'Jonathan Leibovitch',
   company: 'Doctor Appliance',
 }
+
+/** Case study block on the demo page. Keep named false until screenshots / naming are cleared. */
+export const caseStudy = {
+  named: false,
+  name: 'Doctor Appliance',
+  screenshots: [] as { src: string; alt: string }[],
+}

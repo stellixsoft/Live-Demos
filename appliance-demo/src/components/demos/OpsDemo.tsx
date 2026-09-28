@@ -1,16 +1,25 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertTriangle, ArrowRightLeft, Check, GraduationCap, MessageSquareText, Send, Truck, X } from 'lucide-react'
+import { AlertTriangle, ArrowRightLeft, Check, GraduationCap, MessageSquareText, Truck, X } from 'lucide-react'
 import { Pill, Tabs, money } from '../ui'
 import { track } from '@/lib/firebase'
 import type { Crack } from '@/lib/flow'
 import { leaveRequests, locations, lostItems, parts as initialParts, techs, tickets as initialTickets, todaysJobs, vehicles, type Part, type Ticket } from '@/data/sample'
+import { beforeSubmissions, otherForms, trainees } from '@/data/training'
+import { FormsAfter } from './FormsStory'
+import { TraineeProgressCard } from './TraineeProgressCard'
 
-type Tab = 'today' | Crack
+type Tab = 'today' | 'team' | 'inventory' | 'paperwork' | 'support'
+
+function initialTab(first?: Crack): Tab {
+  if (!first) return 'today'
+  if (first === 'training') return 'paperwork'
+  return first
+}
 
 export function OpsDemo({ first }: { first?: Crack }) {
-  const [tab, setTab] = useState<Tab>(first ?? 'today')
+  const [tab, setTab] = useState<Tab>(initialTab(first))
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-white shadow-sm">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 bg-ink px-3 py-2.5 sm:px-4">
@@ -80,12 +89,63 @@ function Today() {
 }
 
 function Team() {
+  const [view, setView] = useState<'people' | 'training'>('people')
+  return (
+    <div className="slide-in">
+      <div className="mb-4 inline-flex rounded-xl border border-line bg-paper p-1" role="tablist">
+        {(['people', 'training'] as const).map((v) => (
+          <button
+            key={v}
+            role="tab"
+            aria-selected={view === v}
+            onClick={() => {
+              setView(v)
+              track('demo_interact', { demo: 'ops', teamView: v })
+            }}
+            className={`min-h-10 rounded-lg px-4 text-[14px] font-semibold ${view === v ? 'bg-ink text-white' : 'text-steel'}`}
+          >
+            {v === 'people' ? 'People' : 'Training'}
+          </button>
+        ))}
+      </div>
+      {view === 'people' ? <TeamPeople /> : <TeamTraining />}
+    </div>
+  )
+}
+
+function TeamTraining() {
+  const [sel, setSel] = useState(trainees[0].id)
+  const t = trainees.find((x) => x.id === sel)!
+  return (
+    <div>
+      <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+        {trainees.map((x) => (
+          <button
+            key={x.id}
+            onClick={() => {
+              setSel(x.id)
+              track('demo_interact', { demo: 'ops', trainee: x.id })
+            }}
+            className={`min-h-10 shrink-0 rounded-full border px-3 text-[13px] font-semibold ${sel === x.id ? 'border-ink bg-ink text-white' : 'border-line text-steel'}`}
+          >
+            {x.name}
+          </button>
+        ))}
+      </div>
+      <div className="mt-3 max-w-md">
+        <TraineeProgressCard key={t.id} trainee={t} highlightDrop={t.id === 'tr1'} />
+      </div>
+    </div>
+  )
+}
+
+function TeamPeople() {
   const [sel, setSel] = useState(techs[0].id)
   const [leaves, setLeaves] = useState(leaveRequests)
   const t = techs.find((x) => x.id === sel)!
   const maxJobs = Math.max(...techs.map((x) => x.jobsWeek))
   return (
-    <div className="slide-in grid gap-5 lg:grid-cols-[260px_1fr]">
+    <div className="grid gap-5 lg:grid-cols-[260px_1fr]">
       <div>
         <ul className="grid gap-1.5">
           {techs.map((x) => (
@@ -349,80 +409,108 @@ function Inventory() {
   )
 }
 
-const formTypes = ['Job completion', 'Issue report', 'Parts request', 'Customer feedback'] as const
-type FormType = (typeof formTypes)[number]
-
-interface Submission {
-  id: number
-  type: FormType
-  who: string
-  summary: string
-  time: string
+function Forms() {
+  const [view, setView] = useState<'before' | 'after'>('before')
+  return (
+    <div>
+      <div className="mb-4 inline-flex rounded-xl border border-line bg-paper p-1" role="tablist">
+        {(['before', 'after'] as const).map((v) => (
+          <button
+            key={v}
+            role="tab"
+            aria-selected={view === v}
+            onClick={() => {
+              setView(v)
+              track('demo_interact', { demo: 'ops', formsView: v })
+            }}
+            className={`min-h-10 rounded-lg px-3 text-[13px] font-semibold sm:px-4 sm:text-[14px] ${view === v ? 'bg-ink text-white' : 'text-steel'}`}
+          >
+            {v === 'before' ? 'How it usually looks' : 'How we’d build it'}
+          </button>
+        ))}
+      </div>
+      {view === 'before' ? <FormsBefore onFix={() => setView('after')} /> : <FormsAfter />}
+      <OtherFormsGrid />
+    </div>
+  )
 }
 
-function Forms() {
-  const [type, setType] = useState<FormType>('Issue report')
-  const [text, setText] = useState('Customer’s water valve is leaking under the sink, not our repair. Took photos and told the customer.')
-  const [feed, setFeed] = useState<Submission[]>([
-    { id: 1, type: 'Job completion', who: 'Marcus Reed', summary: 'Brooks, Samsung fridge. Replaced defrost sensor. 4 photos.', time: '11:02' },
-    { id: 2, type: 'Parts request', who: 'Dana Ortiz', summary: 'LG control board for Walsh job. Waiting on approval.', time: '10:40' },
-    { id: 3, type: 'Customer feedback', who: 'Customer, Nguyen', summary: '5 stars. “On time and explained everything.”', time: '10:31' },
-  ])
-
-  function submit() {
-    if (!text.trim()) return
-    setFeed((f) => [{ id: Date.now(), type, who: 'Kevin Lam', summary: text.trim(), time: 'Just now' }, ...f])
-    setText('')
-    track('demo_interact', { demo: 'ops', action: 'form_submit' })
-  }
-
+function FormsBefore({ onFix }: { onFix: () => void }) {
+  const [open, setOpen] = useState(true)
   return (
-    <div className="slide-in grid gap-5 md:grid-cols-2">
-      <div className="rounded-xl border border-line p-4">
-        <p className="text-[13px] text-steel">Technician’s phone</p>
-        <label className="mt-2 block text-[14px] font-semibold" htmlFor="form-type">
-          Form
-        </label>
-        <select
-          id="form-type"
-          value={type}
-          onChange={(e) => setType(e.target.value as FormType)}
-          className="mt-1 min-h-11 w-full rounded-lg border border-line bg-white px-3 text-[15px]"
-        >
-          {formTypes.map((f) => (
-            <option key={f}>{f}</option>
-          ))}
-        </select>
-        <label className="mt-3 block text-[14px] font-semibold" htmlFor="form-text">
-          Details
-        </label>
-        <textarea
-          id="form-text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={4}
-          className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-[15px]"
-        />
-        <button onClick={submit} className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-form text-[14px] font-semibold text-white">
-          <Send size={15} /> Submit
-        </button>
-        <p className="mt-2 text-[12px] text-steel">Same forms for technicians, office staff and customers. Photos and signatures included.</p>
+    <div className="slide-in overflow-hidden rounded-xl border border-line">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-paper px-3 py-2.5 sm:px-4">
+        <p className="text-[14px] font-bold">Form submissions</p>
+        <Pill tone="plain">182 training reports</Pill>
       </div>
-      <div>
-        <p className="text-[13px] text-steel">Owner’s dashboard, live</p>
-        <ul className="mt-2 grid gap-2">
-          {feed.map((s) => (
-            <li key={s.id} className="slide-in rounded-lg border border-line p-3">
-              <div className="flex items-center justify-between gap-2">
-                <Pill tone={s.type === 'Issue report' ? 'alert' : s.type === 'Parts request' ? 'signal' : s.type === 'Customer feedback' ? 'ok' : 'form'}>{s.type}</Pill>
-                <span className="text-[12px] text-steel">{s.time}</span>
+      <ul className="divide-y divide-line">
+        {beforeSubmissions.map((s, i) => (
+          <li key={`${s.date}-${s.who}-${i}`}>
+            <button
+              type="button"
+              onClick={() => {
+                if (i === 0) setOpen((o) => !o)
+                track('demo_interact', { demo: 'ops', action: 'forms_before_row' })
+              }}
+              className="flex min-h-12 w-full flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2.5 text-left text-[13px] sm:px-4"
+            >
+              <span className="nums w-14 shrink-0 text-steel">{s.date}</span>
+              <span className="w-20 shrink-0 font-semibold sm:w-24">{s.store}</span>
+              <span className="min-w-0 flex-1 truncate">{s.who}</span>
+              <span className="hidden text-steel sm:inline">{s.type}</span>
+              <span className="text-[12px] font-semibold text-form">{i === 0 && open ? 'Hide' : 'View details'}</span>
+            </button>
+            {i === 0 && open && (
+              <div className="border-t border-dashed border-line bg-paper/80 px-3 py-3 sm:px-4">
+                <p className="text-[12px] font-semibold text-steel">Skill ratings (raw text)</p>
+                <pre className="mt-1 overflow-x-auto rounded-md bg-white p-2.5 font-sans text-[12px] leading-relaxed text-ink/80 whitespace-pre-wrap">
+                  {`Punctuality: 5
+Customer communication: 4
+Diagnostics: 3
+Refrigeration (sealed system): 3
+Parts from truck stock: 4
+Safety and PPE: 5`}
+                </pre>
+                <p className="mt-3 text-[14px] text-ink/85">
+                  Someone has to open each one. Kevin’s sealed-system score dropped two weeks ago. Nobody noticed.
+                </p>
               </div>
-              <p className="mt-1.5 text-[14px]">{s.summary}</p>
-              <p className="text-[12px] text-steel">{s.who}</p>
-            </li>
-          ))}
-        </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div className="border-t border-line px-3 py-3 sm:px-4">
+        <button
+          type="button"
+          onClick={() => {
+            onFix()
+            track('demo_interact', { demo: 'ops', formsView: 'after' })
+          }}
+          className="min-h-11 w-full rounded-lg bg-form px-4 text-[14px] font-semibold text-white sm:w-auto"
+        >
+          See how we’d build it
+        </button>
       </div>
+    </div>
+  )
+}
+
+function OtherFormsGrid() {
+  return (
+    <div className="mt-6">
+      <h5 className="text-[14px] font-bold">What happens after, for the other forms</h5>
+      <p className="mt-1 text-[13px] text-steel">Same idea: every form ends in a decision, a task or a number.</p>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        {otherForms.map((f) => (
+          <li key={f.name} className="rounded-lg border border-line p-3">
+            <p className="text-[14px] font-bold">{f.name}</p>
+            <p className="mt-2 text-[12px] font-semibold text-steel">Before</p>
+            <p className="text-[13px] text-ink/80">{f.before}</p>
+            <p className="mt-2 text-[12px] font-semibold text-form">After</p>
+            <p className="text-[13px] text-ink/80">{f.after}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

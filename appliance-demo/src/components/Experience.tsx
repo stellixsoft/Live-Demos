@@ -14,7 +14,7 @@ import { orderSections, sectionMeta, type Answers, type SectionId } from '@/lib/
 import { readVisit, type Visit } from '@/lib/params'
 import { saveLead, track } from '@/lib/firebase'
 import { submitDemoLead } from '@/lib/demoLead'
-import { company, nextSteps, prices, promises, testimonial } from '@/config'
+import { company, nextSteps, prices, promises, testimonial, caseStudy } from '@/config'
 import { faq } from '@/data/faq'
 
 const allSections: SectionId[] = ['website', 'calls', 'payments', 'sheets', 'ops']
@@ -110,6 +110,7 @@ export function Experience() {
                 want={{ wanted: quote.includes(id), onWant: () => toggle(id) }}
               />
             ))}
+            <CaseStudy />
             <Faq />
             <Closing visit={visit} answers={answers} quote={quote} toggle={toggle} />
           </div>
@@ -348,6 +349,34 @@ function MobileBar({ show, quoteCount }: { show: boolean; quoteCount: number }) 
   )
 }
 
+function CaseStudy() {
+  const who = caseStudy.named ? caseStudy.name : 'a four-location appliance repair company'
+  return (
+    <section id="proof" className="border-t border-line py-14 sm:py-20">
+      <div className="mx-auto max-w-[1180px] px-4 sm:px-6">
+        <h2 className="display max-w-[22ch] text-[28px] sm:text-[36px]">We’ve already built this for a multi-location repair company</h2>
+        <p className="mt-4 max-w-[62ch] text-[16px] text-ink/80">
+          {who.charAt(0).toUpperCase() + who.slice(1)} moved its training reports, van checks, audits and staff forms into one system with signatures, per-store views and trainee analytics.
+        </p>
+        <p className="mt-3 max-w-[62ch] text-[16px] text-ink/80">
+          The shop spends less time filling things in, and the system acts on what the team reports.
+        </p>
+        <Proof className="mt-8 max-w-[52ch]" />
+        {caseStudy.screenshots.length > 0 && (
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+            {caseStudy.screenshots.map((s) => (
+              <li key={s.src} className="overflow-hidden rounded-xl border border-line bg-white">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={s.src} alt={s.alt} className="h-auto w-full" />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}
+
 function Faq() {
   return (
     <section id="faq" className="border-t border-line py-14 sm:py-20">
@@ -479,6 +508,7 @@ function SectionFor({
             'Roles, so technicians see their jobs, managers see the team, and you see everything',
             'Approvals with limits, like managers approving parts under $150 and bigger ones coming to you',
             'Tasks, reminders and notifications on everyone’s phone',
+            'Paper forms become phone forms that create tasks when something’s wrong',
             'We move your existing data over, and you can still export to Excel any time',
           ]}
           price={prices.sheets}
@@ -498,16 +528,17 @@ function SectionFor({
           {...want}
           wideDemo
           title="Run technicians, stock, forms and complaints from one dashboard"
-          problem="With several technicians, the hard part isn’t the repairs. It’s knowing who is trained on what, who is on leave, which van has the part, what got lost, and which customer is still waiting for a callback."
+          problem="Most shops already have forms. The problem isn’t filling them in. It’s that nothing happens after: reports pile up in a list nobody reads, a trainee’s score drops for weeks, and action items from meetings get forgotten."
           points={[
-            'Team: technician profiles, performance, training and certificates, leave, interns and 360 feedback',
-            'Inventory: stock across warehouses, stores and vans, transfers, lost items and vehicle upkeep',
-            'Forms: job completion, issue reports, parts and leave requests, with photos and signatures',
-            'Support: every complaint and callback tracked with an owner until it’s resolved',
-            'Works alongside Jobber or Housecall Pro if you already use them, so nothing gets thrown away',
+            'Reports fill in from the job, not from scratch, so trainers finish in under a minute',
+            'Problems in reports turn into tasks and alerts automatically, no one has to open each submission',
+            'Trainee progress and readiness at a glance, with coaching when a skill drops',
+            'A weekly summary instead of a list of hundreds of submissions',
+            'Stock, vans and tools tracked across stores and vehicles',
+            'Complaints tracked to resolution with an owner on every ticket',
           ]}
           price={prices.ops}
-          demo={<OpsDemo first={answers.cracks?.[0]} />}
+          demo={<OpsDemo first={answers.cracks?.includes('training') ? 'training' : answers.cracks?.[0]} />}
         />
       )
   }

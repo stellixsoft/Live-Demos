@@ -7,6 +7,14 @@ export const faq = [
     a: 'StellixSoft LLC is a software company registered in Houston, Texas, with its development team in Islamabad, Pakistan. Besides repair shops, we build enterprise software, cloud systems and AI integrations. Appliance repair businesses we work with include Doctor Appliance.',
   },
   {
+    q: 'We already have forms. Why change?',
+    a: 'Keep the forms your team knows. We make them faster to fill in and make sure something happens after, like a task, an alert or a number on your dashboard.',
+  },
+  {
+    q: 'We have several locations. Does that work?',
+    a: 'Yes, each store sees its own reports, managers see their store, and the owner sees everything, with a summary per store.',
+  },
+  {
     q: 'I already use Jobber or Housecall Pro. Do I have to switch?',
     a: 'No. We connect to what you already use and only build what it can’t do, like warehouse stock, training records or custom approval steps. Your team keeps the app they know.',
   },

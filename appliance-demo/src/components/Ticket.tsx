@@ -32,6 +32,7 @@ const crackOptions: { id: Crack; label: string; hint: string }[] = [
   { id: 'team', label: 'Team', hint: 'Leaves, training, performance, interns' },
   { id: 'inventory', label: 'Inventory', hint: 'Warehouses, vans, stores, lost items' },
   { id: 'paperwork', label: 'Paperwork', hint: 'Forms, reports, approvals' },
+  { id: 'training', label: 'Training and reports', hint: 'Trainee progress, van checks, forms nobody reads' },
   { id: 'support', label: 'Customer complaints', hint: 'Callbacks and follow-ups' },
 ]
 
