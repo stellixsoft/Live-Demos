@@ -61,7 +61,7 @@ export function Experience() {
     })
   }
 
-  const business = visit?.business ?? 'Your Appliance Repair'
+  const business = visit?.business ?? 'Your Garage Doors'
   const city = visit?.city ?? 'your area'
   const showBar = Boolean(answers) && pastHero && active !== 'talk'
 
@@ -74,12 +74,12 @@ export function Experience() {
           <div className="grid items-start gap-8 lg:grid-cols-[1fr_600px] lg:gap-14">
             <div className="lg:sticky lg:top-24 lg:pt-6">
               <h1 className={`display max-w-[18ch] ${visit?.business ? 'text-[29px] sm:text-[44px]' : 'text-[32px] sm:text-[52px]'}`}>
-                {visit?.business ? `${visit.business}, let’s find where jobs slip away.` : 'Let’s find where your repair jobs slip away.'}
+                {visit?.business ? `${visit.business}, let’s find where jobs slip away.` : 'Let’s find where your garage door jobs slip away.'}
               </h1>
               <p className="mt-4 max-w-[46ch] text-[17px] text-ink/80 sm:mt-5 sm:text-[18px]">
                 {visit?.owner ? `${visit.owner}, thanks for the call. ` : ''}
                 {answers
-                  ? 'Here’s what we’d fix first for a shop like yours, and what it costs. Try the demos below.'
+                  ? 'Here’s what we’d fix first for a company like yours, and what it costs. Try the demos below.'
                   : 'Answer a few taps on the work order and this page shows only what fits your business. About 30 seconds.'}
               </p>
               <TrustStrip className="mt-6 hidden sm:grid" />
@@ -163,7 +163,7 @@ function useActiveSection(ids: string[]) {
 function Proof({ className = '', dark = false }: { className?: string; dark?: boolean }) {
   return (
     <figure className={className}>
-      <p className={`text-[13px] font-semibold ${dark ? 'text-signal' : 'text-form'}`}>From a repair shop we work with</p>
+      <p className={`text-[13px] font-semibold ${dark ? 'text-signal' : 'text-form'}`}>From an appliance repair company we work with</p>
       <blockquote className={`mt-2 max-w-[48ch] text-[16px] leading-relaxed ${dark ? 'text-white/90' : 'text-ink/85'}`}>“{testimonial.quote}”</blockquote>
       <figcaption className={`mt-2 text-[14px] ${dark ? 'text-white/60' : 'text-steel'}`}>
         {testimonial.name}, {testimonial.company}
@@ -359,7 +359,7 @@ function CaseStudy() {
           {who.charAt(0).toUpperCase() + who.slice(1)} moved its training reports, van checks, audits and staff forms into one system with signatures, per-store views and trainee analytics.
         </p>
         <p className="mt-3 max-w-[62ch] text-[16px] text-ink/80">
-          The shop spends less time filling things in, and the system acts on what the team reports.
+          The shop spends less time filling things in, and the system acts on what the team reports. Same kind of ops work garage door companies need once they have several trucks.
         </p>
         <Proof className="mt-8 max-w-[52ch]" />
         {caseStudy.screenshots.length > 0 && (
@@ -432,14 +432,14 @@ function SectionFor({
           eyebrowNote={top}
           business={business}
           {...want}
-          title="Show up on Google and let people book without calling"
-          problem="Most people search “appliance repair near me” and call the first shop that looks trustworthy and answers. If you don’t have a site, or it’s slow on a phone, they never get to you."
+          title="Show up on Google and stop renting your leads"
+          problem="Someone with a broken spring searches “garage door repair near me” and calls the first company that looks local and trustworthy. If that isn’t you, you end up paying for the same customers through ads and lead services."
           points={[
-            'A fast website built for phones, with your brands, appliances and service area',
+            'A fast website built for phones, with your services, brands you install and service area',
             `A page for each neighborhood you cover, so you show up in searches around ${city}`,
-            'Online booking that asks for the brand, symptoms and a photo of the model tag',
-            'Google Business Profile set up and kept active, with your real reviews shown on the site',
-            'Every booking lands on your calendar, not in a voicemail',
+            'Online booking with an emergency option, plus a photo of the door and springs before you arrive',
+            'Google Business Profile set up and kept active, with your real reviews and real photos of your trucks and work',
+            'A quote request page for new doors and openers, so installs come to you too',
           ]}
           price={prices.website}
           demo={<WebsiteDemo business={business} city={city} />}
@@ -455,14 +455,14 @@ function SectionFor({
           eyebrowNote={top}
           business={business}
           {...want}
-          title="Stop losing the calls you can’t pick up"
-          problem="When you’re under a sink with wet hands, the phone rings out and the customer calls the next shop on Google. A missed call is usually a lost job."
+          title="Stop losing emergency calls you can’t pick up"
+          problem="A customer with a car stuck in the garage won’t leave a voicemail. If you’re up a ladder winding springs, they call the next company, and that spring job goes with them."
           points={[
             'Missed calls get an instant text from your business number',
-            'The text asks the right questions: appliance, brand, symptoms, model tag photo, error codes',
-            'Customers pick a time window from your real schedule',
+            'The text asks the right questions: what the door is doing, single or double door, opener brand, a photo of the springs',
+            'Emergencies are flagged and sent to you right away, everything else picks a time from your schedule',
             'Optional AI phone answering after hours, with anything unusual passed to you',
-            'You get a short summary so you arrive with the right parts',
+            'You get a short summary so you load the right springs before you leave',
           ]}
           price={prices.calls}
           demo={<CallsDemo business={business} />}
@@ -478,12 +478,13 @@ function SectionFor({
           eyebrowNote={top}
           business={business}
           {...want}
-          title="Get paid at the door and collect reviews on autopilot"
-          problem="Paper invoices get paid late, and asking for reviews is easy to forget at the end of a long day. Both cost you money and new customers."
+          title="Close more quotes, get paid at the door, collect reviews"
+          problem="New door quotes worth thousands sit unanswered because nobody follows up. Repairs get invoiced late, and asking for reviews is easy to forget at the end of a long day."
           points={[
+            'Good, better, best options on your phone, so customers pick their spring or opener on the spot',
+            'New door quotes followed up automatically by text, with a deposit taken online',
             'Invoice from your phone before you leave, paid by card or bank transfer on the spot',
-            'Automatic payment reminders for anything left unpaid',
-            'Payments sync to QuickBooks so there’s nothing to type up at night',
+                        'Payments sync to QuickBooks so there’s nothing to type up at night',
             'Happy customers are asked for a Google review, unhappy ones reach you privately first',
           ]}
           price={prices.payments}
@@ -505,10 +506,9 @@ function SectionFor({
           problem="Google Sheets and Excel work until three people edit the same file, a tab gets deleted, and nobody is reminded about the part that never got ordered. You already know where the mess is. We just build the tidy version."
           points={[
             'Your own app built around how you already work, with your columns and your words',
-            'Roles, so technicians see their jobs, managers see the team, and you see everything',
-            'Approvals with limits, like managers approving parts under $150 and bigger ones coming to you',
+            'Roles, so techs see their jobs, install crews see their installs, and you see everything',
+            'Approvals with limits, like managers approving parts under $150 and door orders coming to you',
             'Tasks, reminders and notifications on everyone’s phone',
-            'Paper forms become phone forms that create tasks when something’s wrong',
             'We move your existing data over, and you can still export to Excel any time',
           ]}
           price={prices.sheets}
@@ -527,18 +527,17 @@ function SectionFor({
           business={business}
           {...want}
           wideDemo
-          title="Run technicians, stock, forms and complaints from one dashboard"
-          problem="Most shops already have forms. The problem isn’t filling them in. It’s that nothing happens after: reports pile up in a list nobody reads, a trainee’s score drops for weeks, and action items from meetings get forgotten."
+          title="Run techs, install crews, stock and callbacks from one dashboard"
+          problem="With several trucks, the hard part isn’t the doors. It’s knowing which van has the right springs, when the ordered door arrives, what each tech sold and earned in commission, and which customer is still waiting for a callback."
           points={[
-            'Reports fill in from the job, not from scratch, so trainers finish in under a minute',
-            'Problems in reports turn into tasks and alerts automatically, no one has to open each submission',
-            'Trainee progress and readiness at a glance, with coaching when a skill drops',
-            'A weekly summary instead of a list of hundreds of submissions',
-            'Stock, vans and tools tracked across stores and vehicles',
-            'Complaints tracked to resolution with an owner on every ticket',
+            'Team: tech and crew profiles, sales and commissions, callbacks, training and time off',
+            'Stock: springs by size, openers, rollers and cables across the warehouse and every van, plus door orders and delivery dates',
+            'Forms: job photos, install checklists, safety checks and parts requests, with signatures',
+            'Callbacks: every warranty return and complaint tracked with an owner until it’s resolved',
+            'Works alongside Jobber or Housecall Pro if you already use them, so nothing gets thrown away',
           ]}
           price={prices.ops}
-          demo={<OpsDemo first={answers.cracks?.includes('training') ? 'training' : answers.cracks?.[0]} />}
+          demo={<OpsDemo first={answers.cracks?.[0]} />}
         />
       )
   }
@@ -552,7 +551,7 @@ function SheetOffer() {
         <div>
           <h3 className="text-[22px] font-bold">Send us one of your sheets</h3>
           <p className="mt-2 max-w-[56ch] text-white/85">
-            We’ll turn it into a working preview with one or two screens, free, within a few days. You’ll see your own jobs, parts or staff list as an app before you decide anything.
+            We’ll turn it into a working preview with one or two screens, free, within a few days. You’ll see your own jobs, springs or install schedule as an app before you decide anything.
           </p>
           <p className="mt-3 flex items-start gap-2 text-[14px] text-white/75">
             <Lock size={14} className="mt-[3px] shrink-0" /> Your data stays yours. We only use it for your preview and delete it if you don’t go ahead.
@@ -683,7 +682,7 @@ function Closing({ visit, answers, quote, toggle }: { visit?: Visit; answers: An
           ) : (
             <form onSubmit={submit} className="grid gap-4">
               <div>
-                <h3 className="text-[20px] font-bold">Get a quote for your shop</h3>
+                <h3 className="text-[20px] font-bold">Get a quote for your company</h3>
                 <p className="mt-1 text-[14px] text-steel">Tap what you want priced. You can change it on the call.</p>
               </div>
               <fieldset>

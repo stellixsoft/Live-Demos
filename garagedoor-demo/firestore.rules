@@ -1,0 +1,20 @@
+rules_version = '2';
+
+// The public page may only ADD lead records. Nobody can read, change
+// or delete them from a browser. You read them in the Firebase console.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /leads/{leadId} {
+      allow read, update, delete: if false;
+      allow create: if request.resource.data.kind in ['quiz_completed', 'cta_click', 'sheet_offer', 'contact_form']
+                    && request.resource.data.size() <= 20
+                    && request.resource.data.createdAt == request.time
+                    && (!('name' in request.resource.data) || (request.resource.data.name is string && request.resource.data.name.size() <= 120))
+                    && (!('phone' in request.resource.data) || (request.resource.data.phone is string && request.resource.data.phone.size() <= 40))
+                    && (!('note' in request.resource.data) || (request.resource.data.note is string && request.resource.data.note.size() <= 2000));
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

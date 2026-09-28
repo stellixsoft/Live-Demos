@@ -1,0 +1,13 @@
+node_modules
+
+.env
+.env.local
+.firebase
+functions/lib
+functions/node_modules
+*.log
+.DS_Store
+.next
+out
+next-env.d.ts
+*.tsbuildinfo

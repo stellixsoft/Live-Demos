@@ -1,0 +1,37 @@
+// Answers to the objections garage door owners raise. Edit freely: keep every
+// answer something you can actually stand behind on a call.
+
+export const faq = [
+  {
+    q: 'Who is StellixSoft?',
+    a: 'StellixSoft LLC is a software company registered in Houston, Texas, with its development team in Islamabad, Pakistan. Besides garage door and other home service companies, we build enterprise software, cloud systems and AI integrations. Repair businesses we work with include Doctor Appliance.',
+  },
+  {
+    q: 'I already pay for ads and lead services. Why would I need this?',
+    a: 'Because every lead you pay for is wasted if the call goes unanswered or the quote is never followed up. We start by making sure the calls you already get turn into booked jobs, then help you get more of your own from Google so you rely less on paid leads.',
+  },
+  {
+    q: 'I already use Jobber, Housecall Pro or ServiceTitan. Do I have to switch?',
+    a: 'No. We connect to what you already use and only build what it can’t do, like spring stock across vans, door order tracking or commission reports. Your team keeps the app they know.',
+  },
+  {
+    q: 'What happens to my Google Sheets and old records?',
+    a: 'We move them over for you, and your team keeps working while we do it. You can still export everything to Excel whenever you want, so you’re never locked in.',
+  },
+  {
+    q: 'I’m not a computer person. Will my techs actually use it?',
+    a: 'Everything is built for a phone first, with big buttons and only the screens each person needs. We set it up with you and walk your team through it.',
+  },
+  {
+    q: 'Is my customer data safe?',
+    a: 'It’s stored with a major cloud provider, each person only sees what their role allows, and the data belongs to you. We can walk you through exactly who has access on the call.',
+  },
+  {
+    q: 'How long does it take?',
+    a: 'A website or missed-call texting usually takes a couple of weeks. Custom software depends on how much you need, and we give you a timeline in writing before anything starts.',
+  },
+  {
+    q: 'Can I start with just one thing?',
+    a: 'Yes, and most companies do. Start with whatever is losing you the most jobs today and add the next piece once the first one pays for itself.',
+  },
+]
