@@ -1,0 +1,13 @@
+.DS_Store
+*.zip
+**/.env
+**/.env.local
+**/node_modules
+**/.next
+**/out
+**/.firebase
+**/functions/lib
+**/functions/node_modules
+**/*.log
+**/*.tsbuildinfo
+**/next-env.d.ts
