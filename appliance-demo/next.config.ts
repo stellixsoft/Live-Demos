@@ -1,9 +1,7 @@
 import type { NextConfig } from 'next'
 
-// Static export: `npm run build` writes a plain website to /out,
-// which Firebase Hosting serves directly (free Spark plan is enough).
+// Server build for Vercel (includes /api/demo-lead for quote emails).
 const nextConfig: NextConfig = {
-  output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
 }

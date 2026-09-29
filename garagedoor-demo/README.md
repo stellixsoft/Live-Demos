@@ -2,7 +2,7 @@
 
 A personalized sales page you send to garage door company owners after a call. It's a copy of the appliance repair demo, rewritten for garage doors: springs, openers, installs, door quotes and commissions. It asks two to four quick questions, then shows only the solutions that fit their business, in order of their biggest problem, with clickable demos.
 
-Built with Next.js (static export), React, Tailwind CSS and Firebase. Hosted on Firebase Hosting, deployed automatically from GitHub.
+Built with Next.js, React, Tailwind CSS and Firebase. Quote form emails via Nodemailer (SMTP) on Vercel.
 
 ---
 
@@ -14,7 +14,7 @@ Built with Next.js (static export), React, Tailwind CSS and Firebase. Hosted on 
 - **Phone**: `(847) 496-9803`
 - **Email**: `info@stellixsoft.com` (display / mailto)
 - **Booking**: `https://calendly.com/stellixsoft/15-minute-meeting`
-- **Quote form**: posts to `https://stellixsoft.com/api/demo-lead`, which emails **sales@stellixsoft.com** (same `EMAIL_TO` inbox as the main contact form)
+- **Quote form**: posts to `/api/demo-lead` on this app, which emails `EMAIL_TO` via SMTP (`SMTP_*` env vars)
 
 Still confirm before going live:
 
@@ -22,16 +22,7 @@ Still confirm before going live:
 - `promises` / `nextSteps`: keep only what’s true for how you work
 - `testimonial`: Doctor Appliance quote from the site — the page labels it as appliance repair, never as a garage door client. Confirm they’re happy to be named
 - FAQ answers in `src/data/faq.ts`
-
-**Deploy note:** the main site must expose `/api/demo-lead` (file lives in the StellixSoft repo at `src/app/api/demo-lead/route.ts`). Without that route live, the quote form cannot email sales@.
-
-For local testing against a local StellixSoft app, set in `.env.local`:
-
-```bash
-NEXT_PUBLIC_DEMO_LEAD_URL=http://localhost:3000/api/demo-lead
-```
-
-(and run the demo on another port, e.g. `npm run dev -- -p 3001`).
+- SMTP + `EMAIL_TO` + `NEXT_PUBLIC_SITE_URL` set in Vercel (see `.env.example`)
 
 Demo screens use invented sample data and are labelled "Sample data" on the page. Don't replace them with made-up testimonials or client results. Add real ones only when you have them.
 
@@ -184,8 +175,8 @@ src/data/sample.ts            invented demo data
 
 ## Reusing it for another trade
 
-Copy the project, change `src/data/sample.ts`, the copy in `Experience.tsx` and `Ticket.tsx`, and deploy it to another subdomain (for example `hvac.stellixsoft.com`) as a second Firebase Hosting site.
+Copy the project, change `src/data/sample.ts`, the copy in `Experience.tsx` and `Ticket.tsx`, and deploy another Vercel project (for example `hvac.stellixsoft.com`).
 
-## About Firebase App Hosting
+## Hosting
 
-This project uses plain Firebase Hosting with a static export, which is free and fastest for a page like this. If you later need server features (server-side rendering, API routes), switch to Firebase **App Hosting**: remove `output: 'export'` from `next.config.ts` and connect the repo under Build, App Hosting in the console. It requires the Blaze plan.
+Deployed on **Vercel** so `/api/demo-lead` can send mail with Nodemailer. Set `SMTP_*`, `EMAIL_TO`, and `NEXT_PUBLIC_SITE_URL` in the Vercel project env. Firebase remains optional for analytics / lead backup only.

@@ -2,7 +2,7 @@
 
 A personalized sales page you send to appliance repair owners after a call. It asks two to four quick questions, then shows only the solutions that fit their business, in order of their biggest problem, with clickable demos.
 
-Built with Next.js (static export), React, Tailwind CSS and Firebase. Hosted on Firebase Hosting, deployed automatically from GitHub.
+Built with Next.js, React, Tailwind CSS and Firebase. Deploy on **Vercel** (quote form uses `/api/demo-lead` + SMTP). Optional Firebase Hosting workflow in this repo targets a static export and is not used when deploying the full app to Vercel.
 
 ---
 
@@ -14,7 +14,7 @@ Built with Next.js (static export), React, Tailwind CSS and Firebase. Hosted on 
 - **Phone**: `(847) 496-9803`
 - **Email**: `info@stellixsoft.com` (display / mailto)
 - **Booking**: `https://calendly.com/stellixsoft/15-minute-meeting`
-- **Quote form**: posts to `https://stellixsoft.com/api/demo-lead`, which emails **sales@stellixsoft.com** (same `EMAIL_TO` inbox as the main contact form)
+- **Quote form**: posts to `/api/demo-lead` on the same deployment; emails **`EMAIL_TO`** via SMTP (see env below)
 
 Still confirm before going live:
 
@@ -23,15 +23,18 @@ Still confirm before going live:
 - `testimonial`: Doctor Appliance quote from the site — confirm they’re happy to be named
 - FAQ answers in `src/data/faq.ts`
 
-**Deploy note:** the main site must expose `/api/demo-lead` (file lives in the StellixSoft repo at `src/app/api/demo-lead/route.ts`). Without that route live, the quote form cannot email sales@.
-
-For local testing against a local StellixSoft app, set in `.env.local`:
+**Quote email (Vercel + local):** copy `.env.example` to `.env.local` and set server-side SMTP vars. In the Vercel project, add the same keys under **Settings → Environment Variables** (do not prefix SMTP or `EMAIL_TO` with `NEXT_PUBLIC_`):
 
 ```bash
-NEXT_PUBLIC_DEMO_LEAD_URL=http://localhost:3000/api/demo-lead
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
+EMAIL_TO=
 ```
 
-(and run the demo on another port, e.g. `npm run dev -- -p 3001`).
+Run `npm run dev` and submit the form; it posts to `http://localhost:3000/api/demo-lead`.
 
 Demo screens use invented sample data and are labelled "Sample data" on the page. Don't replace them with made-up testimonials or client results. Add real ones only when you have them.
 

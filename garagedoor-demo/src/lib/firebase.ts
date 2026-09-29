@@ -38,16 +38,39 @@ export function track(event: string, params: Record<string, string | number | bo
 
 export type LeadKind = 'quiz_completed' | 'cta_click' | 'sheet_offer' | 'contact_form'
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype
+}
+
+/** Firestore rejects `undefined` (including nested). Drop those keys; leave FieldValue / other sentinels alone. */
+function stripUndefined<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((item) => stripUndefined(item)).filter((item) => item !== undefined) as T
+  }
+  if (isPlainObject(value)) {
+    const out: Record<string, unknown> = {}
+    for (const [key, v] of Object.entries(value)) {
+      if (v === undefined) continue
+      out[key] = stripUndefined(v)
+    }
+    return out as T
+  }
+  return value
+}
+
 /** Saves one record to the `leads` collection. Rules allow create only; nobody can read from the browser. */
 export async function saveLead(kind: LeadKind, data: Record<string, unknown>) {
   if (process.env.NODE_ENV === 'development') console.debug('[lead]', kind, data)
   if (!app) return
   try {
-    await addDoc(collection(getFirestore(app), 'leads'), {
+    const payload = stripUndefined({
       kind,
       ...data,
       page: window.location.href.slice(0, 500),
       userAgent: navigator.userAgent.slice(0, 300),
+    })
+    await addDoc(collection(getFirestore(app), 'leads'), {
+      ...payload,
       createdAt: serverTimestamp(),
     })
   } catch (err) {

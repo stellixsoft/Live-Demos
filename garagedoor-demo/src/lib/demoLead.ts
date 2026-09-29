@@ -1,5 +1,3 @@
-import { company } from '@/config'
-
 export type DemoLeadPayload = {
   name: string
   email: string
@@ -17,10 +15,10 @@ export type DemoLeadResult = {
   message: string
 }
 
-/** Posts the quote form to stellixsoft.com (same SMTP inbox as the main contact form). */
+/** Posts the quote form to this app's /api/demo-lead (Nodemailer + SMTP). */
 export async function submitDemoLead(payload: DemoLeadPayload): Promise<DemoLeadResult> {
   try {
-    const res = await fetch(company.demoLeadUrl, {
+    const res = await fetch('/api/demo-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

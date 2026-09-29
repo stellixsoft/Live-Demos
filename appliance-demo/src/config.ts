@@ -10,14 +10,8 @@ export const company = {
   phone: '(847) 496-9803',
   whatsapp: '', // company US line is the phone above; personal WhatsApp lives on business cards only
   logo: '/stellixsoft-logo.png',
-  /**
-   * Sends quote requests to the same inbox as the main site contact form
-   * (EMAIL_TO = sales@stellixsoft.com on stellixsoft.com).
-   * Override with NEXT_PUBLIC_DEMO_LEAD_URL when testing against a local StellixSoft.
-   */
-  demoLeadUrl:
-    process.env.NEXT_PUBLIC_DEMO_LEAD_URL?.trim() ||
-    'https://stellixsoft.com/api/demo-lead',
+  /** Quote form POST target. Same-origin API on Vercel; override for split dev setups. */
+  demoLeadUrl: process.env.NEXT_PUBLIC_DEMO_LEAD_URL?.trim() || '/api/demo-lead',
 }
 
 // Starting prices shown on the page. Owners compare everything to

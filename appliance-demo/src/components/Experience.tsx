@@ -14,6 +14,7 @@ import { orderSections, sectionMeta, type Answers, type SectionId } from '@/lib/
 import { readVisit, type Visit } from '@/lib/params'
 import { saveLead, track } from '@/lib/firebase'
 import { submitDemoLead } from '@/lib/demoLead'
+import { validateName, validatePhone } from '@/lib/validate'
 import { company, nextSteps, prices, promises, testimonial, caseStudy } from '@/config'
 import { faq } from '@/data/faq'
 
@@ -29,7 +30,13 @@ export function Experience() {
     const v = readVisit()
     setVisit(v)
     track('page_open', { business: v.business, city: v.city, ref: v.ref })
-    if (v.skip) setAnswers({ size: v.size, skipped: true })
+    if (v.skip) {
+      setAnswers({
+        ...(v.size ? { size: v.size } : {}),
+        ...(v.problem ? { problem: v.problem } : {}),
+        skipped: true,
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -591,6 +598,18 @@ function Closing({ visit, answers, quote, toggle }: { visit?: Visit; answers: An
     e.preventDefault()
     if (form.website) return // honeypot
     setError('')
+
+    const nameError = validateName(form.name)
+    if (nameError) {
+      setError(nameError)
+      return
+    }
+    const phoneError = validatePhone(form.phone)
+    if (phoneError) {
+      setError(phoneError)
+      return
+    }
+
     setSending(true)
 
     const lead = {
@@ -604,26 +623,29 @@ function Closing({ visit, answers, quote, toggle }: { visit?: Visit; answers: An
       note: form.note,
     }
 
-    const result = await submitDemoLead({
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      business: form.business,
-      note: form.note,
-      interests: quote,
-      website: form.website,
-    })
+    try {
+      const result = await submitDemoLead({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        business: form.business,
+        note: form.note,
+        interests: quote,
+        website: form.website,
+      })
 
-    // Keep a Firestore copy when Firebase is configured (analytics / backup).
-    await saveLead('contact_form', lead)
-    track('cta_click', { cta: 'contact_form', items: quote.length, emailed: result.ok })
+      // Backup only — don't block the success UI on Firestore.
+      void saveLead('contact_form', lead)
+      track('cta_click', { cta: 'contact_form', items: quote.length, emailed: result.ok })
 
-    setSending(false)
-    if (!result.ok) {
-      setError(result.message)
-      return
+      if (!result.ok) {
+        setError(result.message)
+        return
+      }
+      setSent(true)
+    } finally {
+      setSending(false)
     }
-    setSent(true)
   }
 
   return (
@@ -719,8 +741,28 @@ function Closing({ visit, answers, quote, toggle }: { visit?: Visit; answers: An
                 )}
               </fieldset>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Your name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} autoComplete="name" required />
-                <Field label="Phone" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} autoComplete="tel" required />
+                <Field
+                  label="Your name"
+                  value={form.name}
+                  onChange={(v) => setForm({ ...form, name: v })}
+                  autoComplete="name"
+                  required
+                  minLength={2}
+                  maxLength={80}
+                  title="Letters, spaces, hyphens, and apostrophes only"
+                />
+                <Field
+                  label="Phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={(v) => setForm({ ...form, phone: v })}
+                  autoComplete="tel"
+                  inputMode="tel"
+                  required
+                  minLength={7}
+                  maxLength={25}
+                  title="Include country code if outside the US"
+                />
               </div>
               <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} autoComplete="email" required />
               <Field label="Business name" value={form.business} onChange={(v) => setForm({ ...form, business: v })} autoComplete="organization" />
@@ -772,6 +814,10 @@ function Field({
   type = 'text',
   autoComplete,
   required,
+  minLength,
+  maxLength,
+  inputMode,
+  title,
 }: {
   label: string
   value: string
@@ -779,6 +825,10 @@ function Field({
   type?: string
   autoComplete?: string
   required?: boolean
+  minLength?: number
+  maxLength?: number
+  inputMode?: 'text' | 'tel' | 'email' | 'numeric'
+  title?: string
 }) {
   return (
     <label className="grid min-w-0 gap-1 text-[14px] font-semibold">
@@ -789,6 +839,10 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
+        minLength={minLength}
+        maxLength={maxLength}
+        inputMode={inputMode}
+        title={title}
         className="min-h-11 w-full min-w-0 rounded-lg border border-line px-3 text-[16px] font-normal"
       />
     </label>

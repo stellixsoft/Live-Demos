@@ -17,7 +17,7 @@ export type DemoLeadResult = {
   message: string
 }
 
-/** Posts the quote form to stellixsoft.com (same SMTP inbox as the main contact form). */
+/** Posts the quote form to /api/demo-lead (nodemailer + SMTP on the server). */
 export async function submitDemoLead(payload: DemoLeadPayload): Promise<DemoLeadResult> {
   try {
     const res = await fetch(company.demoLeadUrl, {
